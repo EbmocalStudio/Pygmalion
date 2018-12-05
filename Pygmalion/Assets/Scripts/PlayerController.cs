@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 enum Facing {Left = -1, Neutral, Right};
+public enum Movement {Grounded, Jumping, Aerial, Climbing, Neutral};
 
 public class PlayerController : MonoBehaviour {
 
@@ -12,10 +13,9 @@ public class PlayerController : MonoBehaviour {
 	public Collider2D coll;
 
 	// Var pour les deplacements
+	public Movement movState = Movement.Grounded;
 	public float horizontalSpeed = 5.0f;
-	Facing facing = Facing.Neutral;
-	private bool grounded = false;
-	public bool controle = true;
+	private Facing facing = Facing.Neutral;
 	public float groundAngle = 30.0f;
 	public bool canControlInTheAir = false;
 	public float jumpForce = 2.0f;
@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour {
 	// < 0 :: pas dans un saut
 	private float timeInJump = -1.0f;
 	public LayerMask terrainMask;
+	public LayerMask ladderMask;
 
 	// Use this for initialization
 	void Start () {
@@ -33,61 +34,49 @@ public class PlayerController : MonoBehaviour {
 
 	// Update is called once per frame
 	void FixedUpdate () {
-
-		// grounded check
-		Collider2D[] collision = new Collider2D[1];
-		ContactFilter2D filter = new ContactFilter2D();
-		filter.SetLayerMask(terrainMask);
-		filter.SetNormalAngle(groundAngle, 180-groundAngle);
-		if (coll.GetContacts(filter, collision) > 0){
-			grounded = true;
-	//		timeInJump = -1.0f;
-		}
-		else {
-			grounded = false;
-		}
-
-		// Base
-		if (controle){
-
-			// horizontal
 			float haxis = Input.GetAxis("Horizontal");
-			if (grounded || canControlInTheAir){
-				body.velocity = new Vector2(horizontalSpeed * haxis, body.velocity.y);
-			}
-			// flip the sprite if necessary
-			Facing nFace = computeFacing(haxis);
-			if (nFace != Facing.Neutral && nFace != facing){
-				Vector3 scale = transform.localScale;
-				transform.localScale = new Vector3((int)nFace * Mathf.Abs(scale.x), scale.y, scale.z);
-			}
-			facing = nFace;
-
-			// vertical
 			float vaxis = Input.GetAxisRaw("Vertical");
-			if (vaxis > 0){
-				// saut de base
-				if (canJump()){
-					timeInJump = 0.0f;
-					body.AddForce(new Vector2(0, 3*jumpForce));
-				}
-				// augmente la hauteur du saut si on pese plus longtemps
-				else if (timeInJump >= 0.0f && timeInJump < maxJumpTime){
-					body.AddForce(new Vector2(0, jumpForce));
-					timeInJump += Time.deltaTime;
-				}
+			switch(movState){
+				case Movement.Grounded:
+					// mouvement horizontal de base
+					horizontalMovement(haxis);
+					// test pour saut et grimpage
+					if (testLadder(vaxis)){}
+					else if (testJump(vaxis)){}
+					else if (!testGround()){
+						movState = Movement.Aerial;
+					}
+					break;
+				case Movement.Jumping:
+					if (canControlInTheAir){
+						horizontalMovement(haxis);
+					}
+					if (!testLadder(vaxis)){
+						continueJump(vaxis);
+					}
+					break;
+				case Movement.Aerial:
+					if (canControlInTheAir){
+						horizontalMovement(haxis);
+					}
+					if (testGround()){
+						movState = Movement.Grounded;
+					}
+					break;
+				case Movement.Climbing:
+					// TODO
+					break;
+				case Movement.Neutral:
+					// Lorsque les controles ne sont plus dans les mains du joueur
+					if (testGround()){
+						movState = Movement.Grounded;
+					}
+					break;
 			}
-			else { // remmet dans l'etat "pas en saut"
-				timeInJump = -1.0f;
-			}
-
-		}
 	}
 
-	// Pour si les conditions des sauts changent
-	private bool canJump(){
-		return grounded && timeInJump < 0.0f;
-	}
+	// calcule la direction vers laquelle le personnage regarde
+	// float f := vitesse du personnage
 	private Facing computeFacing(float f){
 		if (f < 0){
 			return Facing.Left;
@@ -98,5 +87,64 @@ public class PlayerController : MonoBehaviour {
 		else{
 			return Facing.Right;
 		}
+	}
+
+	// gere les mouvements horizontal du personnage
+	// float haxis := input horizontal
+	private void horizontalMovement(float haxis){
+		body.velocity = new Vector2(horizontalSpeed * haxis, body.velocity.y);
+		// flip the sprite if necessary
+		Facing nFace = computeFacing(haxis);
+		if (nFace != Facing.Neutral && nFace != facing){
+			Vector3 scale = transform.localScale;
+			transform.localScale = new Vector3((int)nFace * Mathf.Abs(scale.x), scale.y, scale.z);
+		}
+		facing = nFace;
+	}
+	// test si le jouer commence a grimper sur une echelle
+	// float vaxis := input vertical
+	private bool testLadder(float vaxis){
+		ContactFilter2D filter = new ContactFilter2D();
+		filter.SetLayerMask(ladderMask);
+		Collider2D[] collisions = new Collider2D[1];
+		if (vaxis != 0 && coll.GetContacts(filter, collisions) > 0){
+			// on essai de grimper sur une echelle!!!
+			// TODO
+			return false;
+		}
+		return false;
+	}
+	// test si le joueur commence a sauter
+	// float vaxis := input vertical
+	private bool testJump(float vaxis){
+		// test pour les echelles
+		// parce qu'on prefere grimper que sauter
+		if (vaxis > 0){
+			timeInJump = 0.0f;
+			body.AddForce(new Vector2(0, 3*jumpForce));
+			movState = Movement.Jumping;
+			return true;
+		}
+		return false;
+	}
+	// s'occupe d'allonger ou de terminer le saut si necessaire
+	// float vaxis := input vaxis
+	private void continueJump(float vaxis){
+			if (vaxis > 0 && timeInJump < maxJumpTime){
+				body.AddForce(new Vector2(0, jumpForce*vaxis));
+				timeInJump += Time.deltaTime;
+			}
+			else {
+				movState = Movement.Aerial;
+			}
+	}
+	// test si le personnage touche le sol
+	// -> bool := true si le joueur touche le sol, sinon false
+	private bool testGround(){
+		Collider2D[] collision = new Collider2D[1];
+		ContactFilter2D filter = new ContactFilter2D();
+		filter.SetLayerMask(terrainMask);
+		filter.SetNormalAngle(groundAngle, 180-groundAngle);
+		return coll.GetContacts(filter, collision) > 0;
 	}
 }
