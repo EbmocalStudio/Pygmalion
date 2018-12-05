@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+enum Facing {Left = -1, Neutral, Right};
+
 public class PlayerController : MonoBehaviour {
 
 	// Ref vers d'autre composant
@@ -11,7 +13,8 @@ public class PlayerController : MonoBehaviour {
 
 	// Var pour les deplacements
 	public float horizontalSpeed = 5.0f;
-	public bool grounded = false;
+	Facing facing = Facing.Neutral;
+	private bool grounded = false;
 	public bool controle = true;
 	public float groundAngle = 30.0f;
 	public bool canControlInTheAir = false;
@@ -49,16 +52,16 @@ public class PlayerController : MonoBehaviour {
 
 			// horizontal
 			float haxis = Input.GetAxis("Horizontal");
-			Vector3 scale = transform.localScale;
-			float scalex = Mathf.Abs(scale.x);
 			if (grounded || canControlInTheAir){
 				body.velocity = new Vector2(horizontalSpeed * haxis, body.velocity.y);
 			}
 			// flip the sprite if necessary
-			if (haxis < 0){
-				scalex = -scalex;
+			Facing nFace = computeFacing(haxis);
+			if (nFace != Facing.Neutral && nFace != facing){
+				Vector3 scale = transform.localScale;
+				transform.localScale = new Vector3((int)nFace * Mathf.Abs(scale.x), scale.y, scale.z);
 			}
-			transform.localScale = new Vector3(scalex, scale.y, scale.z);
+			facing = nFace;
 
 			// vertical
 			float vaxis = Input.GetAxisRaw("Vertical");
@@ -84,5 +87,16 @@ public class PlayerController : MonoBehaviour {
 	// Pour si les conditions des sauts changent
 	private bool canJump(){
 		return grounded && timeInJump < 0.0f;
+	}
+	private Facing computeFacing(float f){
+		if (f < 0){
+			return Facing.Left;
+		}
+		else if (f == 0){
+			return Facing.Neutral;
+		}
+		else{
+			return Facing.Right;
+		}
 	}
 }
