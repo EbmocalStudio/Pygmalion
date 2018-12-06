@@ -5,6 +5,9 @@ using UnityEngine;
 enum Facing {Left = -1, Neutral, Right};
 public enum Movement {Grounded, Aerial, Climbing, Neutral};
 
+//[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Collider2D))]
 public class PlayerController : MonoBehaviour {
 
 	// Ref vers d'autre composant
@@ -14,8 +17,8 @@ public class PlayerController : MonoBehaviour {
 
 	// Var pour les deplacements
 	public Movement movState = Movement.Grounded;
-	public float horizontalSpeed = 5.0f;
-	public float stopTreshold = 0.1f;
+	public float horizontalSpeed = 3.5f;
+	public float stopTreshold = 0.01f;
 	private Facing facing = Facing.Neutral;
 	public float groundAngle = 30.0f;
 	public bool canControlInTheAir = false;
@@ -35,7 +38,7 @@ public class PlayerController : MonoBehaviour {
 
 	// Update is called once per frame
 	void FixedUpdate () {
-			float haxis = Input.GetAxis("Horizontal");
+			float haxis = Input.GetAxisRaw("Horizontal");
 			float vaxis = Input.GetAxisRaw("Vertical");
 			switch(movState){
 				case Movement.Grounded:
@@ -93,7 +96,7 @@ public class PlayerController : MonoBehaviour {
 		Facing nFace = computeFacing(haxis);
 
 		if (nFace == facing && Mathf.Abs(body.velocity.x) <= stopTreshold){
-			speed = 0;
+			speed = body.velocity.x;
 		}
 
 		// Pour que ca fonctionne bien, il faut que les colliders aie un truc special
@@ -108,6 +111,7 @@ public class PlayerController : MonoBehaviour {
 	}
 	// test si le jouer commence a grimper sur une echelle
 	// float vaxis := input vertical
+	// -> bool := true si le joueur commence a grimper une echelle
 	private bool testLadder(float vaxis){
 		ContactFilter2D filter = new ContactFilter2D();
 		filter.SetLayerMask(ladderMask);
@@ -121,6 +125,7 @@ public class PlayerController : MonoBehaviour {
 	}
 	// test si le joueur commence a sauter
 	// float vaxis := input vertical
+	// -> bool := true si le joueur commence a sauter
 	private bool testJump(float vaxis){
 		// test pour les echelles
 		// parce qu'on prefere grimper que sauter
