@@ -5,6 +5,9 @@ using UnityEngine;
 enum Facing {Left = -1, Neutral, Right};
 public enum Movement {Grounded, Aerial, Climbing, Neutral};
 
+[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Collider2D))]
 public class PlayerController : MonoBehaviour {
 
 	// Ref vers d'autre composant
@@ -108,6 +111,7 @@ public class PlayerController : MonoBehaviour {
 	}
 	// test si le jouer commence a grimper sur une echelle
 	// float vaxis := input vertical
+	// -> bool := true si le joueur commence a grimper une echelle
 	private bool testLadder(float vaxis){
 		ContactFilter2D filter = new ContactFilter2D();
 		filter.SetLayerMask(ladderMask);
@@ -121,6 +125,7 @@ public class PlayerController : MonoBehaviour {
 	}
 	// test si le joueur commence a sauter
 	// float vaxis := input vertical
+	// -> bool := true si le joueur commence a sauter
 	private bool testJump(float vaxis){
 		// test pour les echelles
 		// parce qu'on prefere grimper que sauter
