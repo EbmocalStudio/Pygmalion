@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 enum Facing {Left = -1, Neutral, Right};
-public enum Movement {Grounded, Jumping, Aerial, Climbing, Neutral};
+public enum Movement {Grounded, Aerial, Climbing, Neutral};
 
 public class PlayerController : MonoBehaviour {
 
@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour {
 	// Var pour les deplacements
 	public Movement movState = Movement.Grounded;
 	public float horizontalSpeed = 5.0f;
+	public float stopTreshold = 0.1f;
 	private Facing facing = Facing.Neutral;
 	public float groundAngle = 30.0f;
 	public bool canControlInTheAir = false;
@@ -47,24 +48,20 @@ public class PlayerController : MonoBehaviour {
 						movState = Movement.Aerial;
 					}
 					break;
-				case Movement.Jumping:
+				case Movement.Aerial:
 					if (canControlInTheAir){
 						horizontalMovement(haxis);
 					}
 					if (!testLadder(vaxis)){
 						continueJump(vaxis);
-					}
-					break;
-				case Movement.Aerial:
-					if (canControlInTheAir){
-						horizontalMovement(haxis);
-					}
-					if (testGround()){
-						movState = Movement.Grounded;
+						if (testGround()){
+							movState = Movement.Grounded;
+						}
 					}
 					break;
 				case Movement.Climbing:
 					// TODO
+					movState = Movement.Aerial;
 					break;
 				case Movement.Neutral:
 					// Lorsque les controles ne sont plus dans les mains du joueur
@@ -92,14 +89,22 @@ public class PlayerController : MonoBehaviour {
 	// gere les mouvements horizontal du personnage
 	// float haxis := input horizontal
 	private void horizontalMovement(float haxis){
-		body.velocity = new Vector2(horizontalSpeed * haxis, body.velocity.y);
-		// flip the sprite if necessary
+		float speed = horizontalSpeed * haxis;
 		Facing nFace = computeFacing(haxis);
+
+		if (nFace == facing && Mathf.Abs(body.velocity.x) <= stopTreshold){
+			speed = 0;
+		}
+
+		// Pour que ca fonctionne bien, il faut que les colliders aie un truc special
+		// flip the sprite if necessary
 		if (nFace != Facing.Neutral && nFace != facing){
 			Vector3 scale = transform.localScale;
 			transform.localScale = new Vector3((int)nFace * Mathf.Abs(scale.x), scale.y, scale.z);
 		}
+
 		facing = nFace;
+		body.velocity = new Vector2(speed, body.velocity.y);
 	}
 	// test si le jouer commence a grimper sur une echelle
 	// float vaxis := input vertical
@@ -119,24 +124,26 @@ public class PlayerController : MonoBehaviour {
 	private bool testJump(float vaxis){
 		// test pour les echelles
 		// parce qu'on prefere grimper que sauter
-		if (vaxis > 0){
+		if (vaxis > 0 && timeInJump < 0){
 			timeInJump = 0.0f;
 			body.AddForce(new Vector2(0, 3*jumpForce));
-			movState = Movement.Jumping;
+			movState = Movement.Aerial;
 			return true;
 		}
 		return false;
 	}
 	// s'occupe d'allonger ou de terminer le saut si necessaire
+	// ne test pas si le joueur est encore dans les air.
 	// float vaxis := input vaxis
 	private void continueJump(float vaxis){
+		if (timeInJump >= 0){
 			if (vaxis > 0 && timeInJump < maxJumpTime){
-				body.AddForce(new Vector2(0, jumpForce*vaxis));
+				body.AddForce(new Vector2(0, jumpForce));
 				timeInJump += Time.deltaTime;
+			} else {
+				timeInJump = -1.0f;
 			}
-			else {
-				movState = Movement.Aerial;
-			}
+		}
 	}
 	// test si le personnage touche le sol
 	// -> bool := true si le joueur touche le sol, sinon false
