@@ -18,34 +18,41 @@ public class KeyObjectDetector : MonoBehaviour {
 	public bool removeObject = true;
 	public Destiny afterDelivery = Destiny.Disable;
 	public GameObject[] sendMessageTo;
+	public bool requireAction = false;
 
 	void OnTriggerEnter2D(Collider2D other){
-		PlayerInventory inv;
-		if (inv = other.GetComponent<PlayerInventory>()){
-			string msg;
-			if (inv.containsSmallObject(objectId, numberRequired)){
-				if (removeObject)
-					inv.removeSmallObject(objectId, numberRequired);
-				msg = MESSAGE_SUCCESS;
-				switch (afterDelivery){
-					case Destiny.Disable:
-						this.enabled = false;
-						break;
-					case Destiny.Delete:
-						GameObject.Destroy(gameObject);
-						break;
-					case Destiny.Keep:
-					default:
-						break;
-				}
-			}
-			else
-				msg = MESSAGE_MISS;
+		if (!requireAction){
+			PlayerController pc = other.GetComponent<PlayerController>();
+			if (pc)
+				OnActionPerformed(pc);
+		}
+	}
 
-			foreach (GameObject obj in sendMessageTo){
-				obj.SendMessage(MESSAGE_DELIVERY, SendMessageOptions.DontRequireReceiver);
-				obj.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
+	void OnActionPerformed(PlayerController pc){
+		PlayerInventory inv = pc.inventory;
+		string msg;
+		if (inv.containsSmallObject(objectId, numberRequired)){
+			if (removeObject)
+				inv.removeSmallObject(objectId, numberRequired);
+			msg = MESSAGE_SUCCESS;
+			switch (afterDelivery){
+				case Destiny.Disable:
+					this.enabled = false;
+					break;
+				case Destiny.Delete:
+					GameObject.Destroy(gameObject);
+					break;
+				case Destiny.Keep:
+				default:
+					break;
 			}
+		}
+		else
+			msg = MESSAGE_MISS;
+
+		foreach (GameObject obj in sendMessageTo){
+			obj.SendMessage(MESSAGE_DELIVERY, SendMessageOptions.DontRequireReceiver);
+			obj.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
 		}
 	}
 

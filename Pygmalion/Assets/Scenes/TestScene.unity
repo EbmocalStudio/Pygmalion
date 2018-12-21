@@ -311,6 +311,7 @@ MonoBehaviour:
   anim: {fileID: 0}
   body: {fileID: 0}
   coll: {fileID: 0}
+  inventory: {fileID: 0}
   movState: 0
   horizontalSpeed: 3.5
   stopTreshold: 0.01
@@ -324,6 +325,9 @@ MonoBehaviour:
   ladderMask:
     serializedVersion: 2
     m_Bits: 512
+  actionMask:
+    serializedVersion: 2
+    m_Bits: 2048
 --- !u!114 &679020836
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -346,7 +350,7 @@ GameObject:
   - component: {fileID: 858268290}
   - component: {fileID: 858268292}
   - component: {fileID: 858268291}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: door_detector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -383,6 +387,7 @@ MonoBehaviour:
   afterDelivery: 1
   sendMessageTo:
   - {fileID: 885336055}
+  requireAction: 1
 --- !u!61 &858268292
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -765,13 +770,13 @@ GameObject:
   - component: {fileID: 1989737987}
   - component: {fileID: 1989737986}
   - component: {fileID: 1989737985}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: key_test
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1989737984
 Transform:
   m_ObjectHideFlags: 0
@@ -799,6 +804,7 @@ MonoBehaviour:
   id: clef
   replaceWith: {fileID: 0}
   destroyObj: 1
+  autoPickup: 0
 --- !u!61 &1989737986
 BoxCollider2D:
   m_ObjectHideFlags: 0

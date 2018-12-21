@@ -8,12 +8,14 @@ public enum Movement {Grounded, Aerial, Climbing, Neutral};
 //[RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(PlayerInventory))]
 public class PlayerController : MonoBehaviour {
 
 	// Ref vers d'autre composant
 	public Animator anim;
 	public Rigidbody2D body;
 	public Collider2D coll;
+	public PlayerInventory inventory;
 
 	// Var pour les deplacements
 	public Movement movState = Movement.Grounded;
@@ -28,12 +30,14 @@ public class PlayerController : MonoBehaviour {
 	private float timeInJump = -1.0f;
 	public LayerMask terrainMask;
 	public LayerMask ladderMask;
+	public LayerMask actionMask;
 
 	// Use this for initialization
 	void Start () {
 		anim = GetComponent<Animator>();
 		body = GetComponent<Rigidbody2D>();
 		coll = GetComponent<Collider2D>();
+		inventory = GetComponent<PlayerInventory>();
 	}
 
 	// Update is called once per frame
@@ -72,6 +76,20 @@ public class PlayerController : MonoBehaviour {
 						movState = Movement.Grounded;
 					}
 					break;
+			}
+
+			if (Input.GetButtonDown("Pickup")){
+				// un peu d'espace pour etre sur
+				Collider2D[] collisions = new Collider2D[8];
+				ContactFilter2D filter = new ContactFilter2D();
+				filter.SetLayerMask(actionMask);
+				filter.useTriggers = true;
+				if (coll.GetContacts(filter, collisions) > 0){
+					foreach (Collider2D autre in collisions){
+						if (autre)
+							autre.SendMessage("OnActionPerformed", this, SendMessageOptions.DontRequireReceiver);
+					}
+				}
 			}
 	}
 

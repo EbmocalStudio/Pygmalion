@@ -12,18 +12,36 @@ public class KeyObject : MonoBehaviour {
 	// si false, une fois ramasse, ce composant va etre desactive
 	// si true, l'objet est detruit
 	public bool destroyObj = true;
+	// si true, l'objet va etre automatiquement ramasse lorsque le personnage le touche
+	// sinon, il doit peser sur le bouton ramasser
+	public bool autoPickup = true;
 
 	void OnTriggerEnter2D(Collider2D coll){
-		PlayerInventory inv = coll.GetComponent<PlayerInventory>();
-		if (inv){
-			inv.addObject(id);
-			if (destroyObj)
-				GameObject.Destroy(gameObject);
-			else
-				this.enabled = false;
-			if (replaceWith)
-				GameObject.Instantiate(replaceWith, transform.position, transform.rotation);
+		if (autoPickup){
+			PlayerInventory inv = coll.GetComponent<PlayerInventory>();
+			if (inv){
+				inv.addObject(id);
+				OnObjectAdded();
+			}
 		}
+	}
+
+	void OnObjectAdded(){
+		if (destroyObj)
+			GameObject.Destroy(gameObject);
+		else
+			this.enabled = false;
+		if (replaceWith)
+			GameObject.Instantiate(replaceWith, transform.position, transform.rotation);
+	}
+
+	void OnActionPerformed(PlayerController pc){
+		pc.inventory.addObject(id);
+		OnObjectAdded();
+	}
+
+	public static implicit operator string(KeyObject obj){
+		return obj.id;
 	}
 
 }
