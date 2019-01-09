@@ -23,7 +23,8 @@ public class OrthoParallax : MonoBehaviour {
 		foreach (Layer layer in layers){
 			Vector3 trans = deltaPos * layer.relativeSpeed;
 			foreach (Transform obj in layer.objects){
-				obj.Translate(trans);
+                if (obj)
+				    obj.Translate(trans);
 			}
 		}
 
