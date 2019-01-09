@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour {
 	public Rigidbody2D body;
 	public Collider2D coll;
 	public PlayerInventory inventory;
+    public Collider2D pickupZone;
 
 	// Var pour les deplacements
 	public Movement movState = Movement.Grounded;
@@ -28,6 +29,8 @@ public class PlayerController : MonoBehaviour {
 	public float maxJumpTime = 0.1f;
 	// < 0 :: pas dans un saut
 	private float timeInJump = -1.0f;
+    // 
+    public uint maxActionReceiverDetection = 4;
 	public LayerMask terrainMask;
 	public LayerMask ladderMask;
 	public LayerMask actionMask;
@@ -80,7 +83,7 @@ public class PlayerController : MonoBehaviour {
 
 			if (Input.GetButtonDown("Pickup")){
 				// un peu d'espace pour etre sur
-				Collider2D[] collisions = new Collider2D[8];
+				Collider2D[] collisions = new Collider2D[maxActionReceiverDetection];
 				ContactFilter2D filter = new ContactFilter2D();
 				filter.SetLayerMask(actionMask);
 				filter.useTriggers = true;

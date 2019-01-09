@@ -4,7 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
 public class CameraController : MonoBehaviour {
-	static Vector3 center = new Vector3(0.5f, 0.5f, 0.0f);
+//	static Vector3 center = new Vector3(0.5f, 0.5f, 0.0f);
 
 	// in world
 	public bool useBounds = true;
