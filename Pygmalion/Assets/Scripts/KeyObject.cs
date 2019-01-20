@@ -28,14 +28,15 @@ public class KeyObject : MonoBehaviour {
 
 	void OnObjectAdded(){
 		if (destroyObj)
-			GameObject.Destroy(gameObject);
+			Destroy(gameObject);
 		else
 			this.enabled = false;
 		if (replaceWith)
-			GameObject.Instantiate(replaceWith, transform.position, transform.rotation);
+			Instantiate(replaceWith, transform.position, transform.rotation);
 	}
 
 	void OnActionPerformed(PlayerController pc){
+        Debug.Log("Action Performed on " + gameObject.name);
 		pc.inventory.addObject(id);
 		OnObjectAdded();
 	}

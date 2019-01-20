@@ -8,6 +8,7 @@ public class PlayerInventory : MonoBehaviour
 
     public Rigidbody2D bigObj;
     private RigidbodyType2D bigObjOldState;
+    private LayerMask bigObjOldLayer;
     public Dictionary<string, SmallObject> smallObjs = new Dictionary<string, SmallObject>();
     // from top center
     public Vector3 heldItemOffset;
@@ -81,6 +82,8 @@ public class PlayerInventory : MonoBehaviour
         obj.BroadcastMessage("OnPickup", SendMessageOptions.DontRequireReceiver);
         bigObjOldState = bigObj.bodyType;
         bigObj.bodyType = RigidbodyType2D.Kinematic;
+        bigObjOldLayer = obj.gameObject.layer;
+        obj.gameObject.layer = gameObject.layer;
         return true;
     }
 
@@ -91,9 +94,10 @@ public class PlayerInventory : MonoBehaviour
             obj = null;
             return false;
         }
-        bigObj.BroadcastMessage("OnDrop", SendMessageOptions.DontRequireReceiver);
         obj = bigObj;
         obj.bodyType = bigObjOldState;
+        obj.gameObject.layer = bigObjOldLayer;
+        obj.BroadcastMessage("OnDrop", SendMessageOptions.DontRequireReceiver);
         bigObj = null;
         return true;
     }

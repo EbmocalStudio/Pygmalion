@@ -92,4 +92,38 @@ public class Util {
         return x * x + y * y + z * z;
     }
 
+    /*
+     * Classe pour comparer les bounds de deux collider et decider si un est plus proche de l'objet   
+     */
+    public class GOComparer : IComparer<GameObject>
+    {
+        private Collider2D coll;
+        public GOComparer(Collider2D c)
+        {
+            coll = c;
+        }
+        public int Compare(GameObject x, GameObject y)
+        {
+            Bounds bounds = coll.bounds;
+            float distX, distY;
+
+            Collider2D c = x.GetComponent<Collider2D>();
+            if (c)
+                distX = GetSqrDistance(bounds, c.bounds);
+            else
+                distX = GetSqrDistance(bounds, x.transform.position);
+            c = y.GetComponent<Collider2D>();
+            if (c)
+                distY = GetSqrDistance(bounds, c.bounds);
+            else
+                distY = GetSqrDistance(bounds, y.transform.position);
+
+            if (distX < distY)
+                return -1;
+            if (distX == distY)
+                return 0;
+            return 1;
+        }
+    }
+
 }

@@ -9,6 +9,7 @@ public enum Movement {Grounded, Aerial, Climbing, Neutral};
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(PlayerInventory))]
+[RequireComponent(typeof(ObjectDetector))]
 public class PlayerController : MonoBehaviour {
 
 	// Ref vers d'autre composant
@@ -17,6 +18,7 @@ public class PlayerController : MonoBehaviour {
 	public Collider2D coll;
 	public PlayerInventory inventory;
     public Collider2D pickupZone;
+    public ObjectDetector detector;
 
 	// Var pour les deplacements
 	public Movement movState = Movement.Grounded;
@@ -41,6 +43,7 @@ public class PlayerController : MonoBehaviour {
 		body = GetComponent<Rigidbody2D>();
 		coll = GetComponent<Collider2D>();
 		inventory = GetComponent<PlayerInventory>();
+        detector = GetComponent<ObjectDetector>();
 	}
 
 	// Update is called once per frame
@@ -82,17 +85,10 @@ public class PlayerController : MonoBehaviour {
 			}
 
 			if (Input.GetButtonDown("Pickup")){
-				// un peu d'espace pour etre sur
-				Collider2D[] collisions = new Collider2D[maxActionReceiverDetection];
-				ContactFilter2D filter = new ContactFilter2D();
-				filter.SetLayerMask(actionMask);
-				filter.useTriggers = true;
-				if (coll.GetContacts(filter, collisions) > 0){
-					foreach (Collider2D autre in collisions){
-						if (autre)
-							autre.SendMessage("OnActionPerformed", this, SendMessageOptions.DontRequireReceiver);
-					}
-				}
+                GameObject receiver = detector.GetSelected();
+                if (receiver){
+                    receiver.SendMessage("OnActionPerformed", this, SendMessageOptions.DontRequireReceiver);
+                }
 			}
 	}
 

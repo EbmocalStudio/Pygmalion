@@ -63,7 +63,8 @@ public class InteractiveObjectDetector : MonoBehaviour {
     private void OnTriggerEnter2D(Collider2D collision)
     {
         GameObject go = collision.gameObject;
-        AddObject(go);
+        if ((interactiveLayer.value & go.layer) != 0)
+            AddObject(go);
     }
 
     private void OnTriggerExit2D(Collider2D collision)
