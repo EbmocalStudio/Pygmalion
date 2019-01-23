@@ -92,6 +92,27 @@ public class Util {
         return x * x + y * y + z * z;
     }
 
+    public static Vector3 getBottomFront(Collider2D coll)
+    {
+        Bounds bounds = coll.bounds;
+        float front;
+        if (coll.transform.localScale.x < 0)
+            front = bounds.min.x;
+        else
+            front = bounds.max.x;
+        return new Vector3(front, bounds.min.y, bounds.min.z);
+    }
+    public static Vector3 getBottomBack(Collider2D coll)
+    {
+        Bounds bounds = coll.bounds;
+        float front;
+        if (coll.transform.localScale.x < 0)
+            front = bounds.max.x;
+        else
+            front = bounds.min.x;
+        return new Vector3(front, bounds.min.y, bounds.min.z);
+    }
+
     /*
      * Classe pour comparer les bounds de deux collider et decider si un est plus proche de l'objet   
      */

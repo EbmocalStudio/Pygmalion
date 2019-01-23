@@ -85,11 +85,27 @@ public class PlayerController : MonoBehaviour {
 			}
 
 			if (Input.GetButtonDown("Pickup")){
-                GameObject receiver = detector.GetSelected();
-                if (receiver){
-                    receiver.SendMessage("OnActionPerformed", this, SendMessageOptions.DontRequireReceiver);
+                if (inventory.bigObj)
+                {
+                    Rigidbody2D bigObj;
+                    Transform dropPos;
+                    Vector3 boOffset = Vector3.zero;
+                    inventory.dropBigObject(out bigObj, out dropPos);
+                    boOffset -= transform.localScale.x < 0 ? Util.getBottomFront(bigObj.GetComponent<Collider2D>()) : Util.getBottomBack(bigObj.GetComponent<Collider2D>());
+                    boOffset += bigObj.transform.position;
+                    bigObj.position = dropPos.position + boOffset;
                 }
-			}
+                else
+                 {
+                    GameObject receiver = detector.GetSelected();
+                    Debug.Log("DETECTED");
+                    if (receiver)
+                    {
+                        receiver.SendMessage("OnActionPerformed", this, SendMessageOptions.DontRequireReceiver);
+                    }
+                }
+             }
+            
 	}
 
 	// calcule la direction vers laquelle le personnage regarde
@@ -176,4 +192,6 @@ public class PlayerController : MonoBehaviour {
 		filter.SetNormalAngle(groundAngle, 180-groundAngle);
 		return coll.GetContacts(filter, collision) > 0;
 	}
+
+
 }

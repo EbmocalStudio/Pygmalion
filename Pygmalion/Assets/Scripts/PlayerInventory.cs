@@ -11,16 +11,17 @@ public class PlayerInventory : MonoBehaviour
     private LayerMask bigObjOldLayer;
     public Dictionary<string, SmallObject> smallObjs = new Dictionary<string, SmallObject>();
     // from top center
-    public Vector3 heldItemOffset;
+    public Transform heldItemPosition;
+    public Transform dropPosition; // from bottom right
 
     public void FixedUpdate()
     {
         if (bigObj)
         {
-            Vector3 heldPoint = Util.getPosition(gameObject, heldItemOffset, Util.getTopCenterFromBounds);
+//            Vector3 heldPoint = Util.getPosition(gameObject, heldItemOffset, Util.getTopCenterFromBounds);
             Vector3 bigObjPivot = Util.getPosition(bigObj.gameObject, Vector3.zero, Util.getBottomCenterFromBounds);
             Vector3 delta = bigObj.transform.position-bigObjPivot;
-            bigObj.transform.position = heldPoint + delta;
+            bigObj.transform.position = heldItemPosition.position + delta;
         }
     }
 
@@ -87,8 +88,9 @@ public class PlayerInventory : MonoBehaviour
         return true;
     }
 
-    public bool dropBigObject(out Rigidbody2D obj)
+    public bool dropBigObject(out Rigidbody2D obj, out Transform dropPos)
     {
+        dropPos = dropPosition;
         if (!bigObj)
         {
             obj = null;
