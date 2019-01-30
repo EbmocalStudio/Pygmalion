@@ -39,11 +39,11 @@ public class PlayerController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		anim = GetComponent<Animator>();
-		body = GetComponent<Rigidbody2D>();
-		coll = GetComponent<Collider2D>();
-		inventory = GetComponent<PlayerInventory>();
-        detector = GetComponent<ObjectDetector>();
+		anim = GetComponentInChildren<Animator>();
+		body = GetComponentInChildren<Rigidbody2D>();
+		coll = GetComponentInChildren<Collider2D>();
+		inventory = GetComponentInChildren<PlayerInventory>();
+        detector = GetComponentInChildren<ObjectDetector>();
 	}
 
 	// Update is called once per frame
@@ -105,7 +105,12 @@ public class PlayerController : MonoBehaviour {
                     }
                 }
              }
-            
+
+            // update animator
+            anim.SetBool("grounded", movState != Movement.Aerial);
+            anim.SetFloat("h_speed", Mathf.Abs(body.velocity.x));
+            anim.SetFloat("v_speed", body.velocity.y);
+
 	}
 
 	// calcule la direction vers laquelle le personnage regarde
@@ -114,12 +119,10 @@ public class PlayerController : MonoBehaviour {
 		if (f < 0){
 			return Facing.Left;
 		}
-		else if (f == 0){
+		if (f == 0){
 			return Facing.Neutral;
 		}
-		else{
-			return Facing.Right;
-		}
+        return Facing.Right;
 	}
 
 	// gere les mouvements horizontal du personnage
