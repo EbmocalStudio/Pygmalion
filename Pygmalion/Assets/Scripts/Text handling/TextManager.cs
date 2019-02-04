@@ -81,10 +81,12 @@ public class TextManager : MonoBehaviour {
 
 	public Text textExample;
 	public Text highlightExample;
+	public GameObject definitionExample;
 
 	private TextGenerator _textGenerator;
 	private DynamicTextData _textData;
 	private float _canvaScale;
+	private bool _isMouseEventActive = true;
 
 	private void Start() {
 		TextGenerationSettings settings = textExample.GetGenerationSettings(textExample.rectTransform.rect.size);
@@ -102,19 +104,45 @@ public class TextManager : MonoBehaviour {
 		DrawWords(Time.deltaTime, Color.blue);
 	}
 
+	private void OnMouseDown() {
+		if(_isMouseEventActive) {
+			DynamicTextData.WordData word = HighLightWord(Camera.main.ScreenToWorldPoint(Input.mousePosition), Color.green);
+
+			if(word != null) {
+				definitionExample.SetActive(true);
+				definitionExample.transform.GetChild(0).GetComponent<Text>().text = word.text;
+				definitionExample.transform.GetChild(1).GetComponent<Text>().text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+				_isMouseEventActive = false;
+			}
+		}
+	}
+
+	public void DisableDefinitionPanel() {
+		definitionExample.SetActive(false);
+		highlightExample.text = "";
+		_isMouseEventActive = true;
+	}
+
 	private void OnMouseOver() {
-		Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		if(_isMouseEventActive)
+			HighLightWord(Camera.main.ScreenToWorldPoint(Input.mousePosition), Color.red);
+	}
+
+	private DynamicTextData.WordData HighLightWord(Vector2 position, Color color) {
 		foreach(DynamicTextData.WordData word in _textData.words) {
-			if(mousePos.x < word.position.x - word.size.x / 2 || mousePos.x > word.position.x + word.size.x / 2)
+			if(position.x < word.position.x - word.size.x / 2 || position.x > word.position.x + word.size.x / 2)
 				continue;
-			if(mousePos.y < word.position.y - word.size.y / 2 || mousePos.y > word.position.y + word.size.y / 2)
+			if(position.y < word.position.y - word.size.y / 2 || position.y > word.position.y + word.size.y / 2)
 				continue;
 
 			highlightExample.text = word.text;
 			highlightExample.rectTransform.position = word.position;
+			highlightExample.color = color;
 
-			return;
+			return word;
 		}
+
+		return null;
 	}
 
 	//For debugging purposes, draws the extents of all characters in a given dynamic string.
