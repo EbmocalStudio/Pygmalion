@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
 public class TextManager : MonoBehaviour {
@@ -65,7 +66,7 @@ public class TextManager : MonoBehaviour {
 				 * E.g. : ; ' - ! ? ( )
 				 */
 				if(text[i] == ' ' || text[i] == ',' || text[i] == '.') {
-					int length = i - 1 - wordIndex;
+					int length = i - wordIndex;
 					if(length > 0) {
 						//If a word separating char is found, add the completed word to the list.
 						words.Add(new WordData(text.Substring(wordIndex, length), wordIndex, i - 1, characters));
@@ -79,6 +80,7 @@ public class TextManager : MonoBehaviour {
 	}
 
 	public Text textExample;
+	public Text highlightExample;
 
 	private TextGenerator _textGenerator;
 	private DynamicTextData _textData;
@@ -98,6 +100,21 @@ public class TextManager : MonoBehaviour {
 		//Debugging.
 		DrawCharacters(Time.deltaTime, Color.red);
 		DrawWords(Time.deltaTime, Color.blue);
+	}
+
+	private void OnMouseOver() {
+		Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		foreach(DynamicTextData.WordData word in _textData.words) {
+			if(mousePos.x < word.position.x - word.size.x / 2 || mousePos.x > word.position.x + word.size.x / 2)
+				continue;
+			if(mousePos.y < word.position.y - word.size.y / 2 || mousePos.y > word.position.y + word.size.y / 2)
+				continue;
+
+			highlightExample.text = word.text;
+			highlightExample.rectTransform.position = word.position;
+
+			return;
+		}
 	}
 
 	//For debugging purposes, draws the extents of all characters in a given dynamic string.
