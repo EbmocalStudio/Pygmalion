@@ -2,15 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FableDrawer : MonoBehaviour {
+public abstract class FableDrawer : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public abstract GameObject draw(string fstr, Transform position);
+
 }
