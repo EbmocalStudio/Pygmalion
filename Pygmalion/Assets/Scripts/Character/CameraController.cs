@@ -11,6 +11,8 @@ public class CameraController : MonoBehaviour {
 	public Vector3 minBound;
 	public Vector3 maxBound;
 
+    //private Vector3 minLimit, maxLimit;
+
 	// in viewport
 	public Vector3 minFreedom = new Vector3(0.5f, 0.2f, 9.0f);
 	public Vector3 maxFreedom = new Vector3(0.5f, 0.7f, 11.0f);
@@ -43,4 +45,5 @@ public class CameraController : MonoBehaviour {
 			transform.position = newPos;
 		}
 	}
+
 }
