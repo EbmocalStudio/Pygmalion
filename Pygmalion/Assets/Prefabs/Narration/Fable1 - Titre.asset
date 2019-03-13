@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7377d1a17be070438973a4a2fc6cd2b, type: 3}
+  m_Name: Fable1 - Titre
+  m_EditorClassIdentifier: 
+  fableTitle: Fable1 - Titre
+  fableText: Le Corbeau et le Renard
+  audioClip: {fileID: 8300000, guid: 25130c1e07865e44988959f19c1009fe, type: 3}
+  markers:
+  - audioTime: 0.18
+    sample: 7938
+  - audioTime: 0.42
+    sample: 18522
+  - audioTime: 0.88
+    sample: 38808
+  - audioTime: 1.03
+    sample: 45423
+  - audioTime: 1.21
+    sample: 52038

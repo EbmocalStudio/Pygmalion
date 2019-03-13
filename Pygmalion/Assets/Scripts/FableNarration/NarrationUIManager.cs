@@ -10,16 +10,22 @@ public class NarrationUIManager : MonoBehaviour {
 	// - Clean rectTransform utilization.
 	// - Figure a way to have the canvas region follow the camera without moving the text.
 	
-	public Text highlightExample;
 	public GameObject definitionExample;
-	public DynamicTextData textData;
-	
+	public bool debuggingOn;
+	public Color debuggingCharacterColor;
+	public Color debuggingWordColor;
+
+	private DynamicTextData _textData;
+	private Text _currentHighlight;
+
 	private bool _isHoverActive = true;
 
 	private void Update() {
-		//Debugging.
-		DrawCharacters(Time.deltaTime, Color.red);
-		DrawWords(Time.deltaTime, Color.blue);
+		if(_textData != null && debuggingOn) {
+			//Debugging.
+			DrawCharacters(Time.deltaTime, debuggingCharacterColor);
+			DrawWords(Time.deltaTime, debuggingWordColor);
+		}
 	}
 
 	private void OnMouseDown() {
@@ -38,9 +44,19 @@ public class NarrationUIManager : MonoBehaviour {
 		}
 	}
 
+	public void SetEmpty() {
+		_textData = null;
+		_currentHighlight = null;
+	}
+
+	public void LoadData(DynamicTextData textData, Text highlightText) {
+		_textData = textData;
+		_currentHighlight = highlightText;
+	}
+
 	public void DisableDefinitionPanel() {
 		definitionExample.SetActive(false);
-		highlightExample.text = "";
+		_currentHighlight.text = "";
 		_isHoverActive = true;
 	}
 
@@ -54,8 +70,8 @@ public class NarrationUIManager : MonoBehaviour {
 	}
 
 	private DynamicTextData.WordData GetWordFromPosition(Vector2 position) {
-		foreach(DynamicTextData.WordData word in textData.words) {
-			Vector2 pos = (Vector2)textData.containerTransform.position + word.position;
+		foreach(DynamicTextData.WordData word in _textData.words) {
+			Vector2 pos = (Vector2)_textData.containerTransform.position + word.position;
 			if(position.x < pos.x - word.size.x / 2 || position.x > pos.x + word.size.x / 2)
 				continue;
 			if(position.y < pos.y - word.size.y / 2 || position.y > pos.y + word.size.y / 2)
@@ -68,16 +84,16 @@ public class NarrationUIManager : MonoBehaviour {
 	}
 
 	public void HighlightWord(DynamicTextData.WordData word, Color color) {
-		highlightExample.text = word.text;
-		highlightExample.rectTransform.position = (Vector2)textData.containerTransform.position + word.position;
-		highlightExample.color = color;
+		_currentHighlight.text = word.text;
+		_currentHighlight.rectTransform.position = (Vector2)_textData.containerTransform.position + word.position;
+		_currentHighlight.color = color;
 	}
 
 	//For debugging purposes, draws the extents of all characters in a given dynamic string.
 	private void DrawCharacters(float duration, Color color) {
-		foreach(DynamicTextData.CharacterData data in textData.characters) {
+		foreach(DynamicTextData.CharacterData data in _textData.characters) {
 			DebugTools.DrawRectangle(
-				(Vector2)textData.containerTransform.position + data.localPos,
+				(Vector2)_textData.containerTransform.position + data.localPos,
 				data.worldSize.x / 2,
 				data.worldSize.y / 2,
 				color,
@@ -88,9 +104,9 @@ public class NarrationUIManager : MonoBehaviour {
 
 	//For debugging purposes, draws the extents of all words in a given dynamic string.
 	private void DrawWords(float duration, Color color) {
-		foreach(DynamicTextData.WordData data in textData.words) {
+		foreach(DynamicTextData.WordData data in _textData.words) {
 			DebugTools.DrawRectangle(
-				(Vector2)textData.containerTransform.position + data.position,
+				(Vector2)_textData.containerTransform.position + data.position,
 				data.size.x / 2,
 				data.size.y / 2,
 				color,

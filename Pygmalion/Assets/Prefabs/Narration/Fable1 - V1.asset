@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7377d1a17be070438973a4a2fc6cd2b, type: 3}
+  m_Name: Fable1 - V1
+  m_EditorClassIdentifier: 
+  fableTitle: Fable1 - V1
+  fableText: "Ma\xEEtre Corbeau, sur un arbre perch\xE9,"
+  audioClip: {fileID: 8300000, guid: e0c1b3657ace5254b9bf0c45725fd8cc, type: 3}
+  markers:
+  - audioTime: 0.19
+    sample: 9703
+  - audioTime: 0.67
+    sample: 29548
+  - audioTime: 1.51
+    sample: 67915
+  - audioTime: 1.73
+    sample: 77617
+  - audioTime: 1.89
+    sample: 83791
+  - audioTime: 2.47
+    sample: 109369

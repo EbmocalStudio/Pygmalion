@@ -65,7 +65,7 @@ namespace TextUtil {
 				 * Change conditions to allow a certain flexibility and avoid certain exceptions.
 				 * E.g. : ; ' - ! ? ( )
 				 */
-				if(text[i] == ' ' || text[i] == ',' || text[i] == '.') {
+				if(text[i] == ' ' || text[i] == ',' || text[i] == '.' || text[i] == '\0' || text[i] == '!' || text[i] == ':' || text[i] == '\n') {
 					int length = i - wordIndex;
 					if(length > 0) {
 						//If a word separating char is found, add the completed word to the list.

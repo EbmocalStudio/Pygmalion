@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7377d1a17be070438973a4a2fc6cd2b, type: 3}
+  m_Name: Fable5 - V5-16
+  m_EditorClassIdentifier: 
+  fableTitle: Fable5 - V5-16
+  fableText: "Et bonjour, Monsieur du Corbeau,\r\nQue vous \xEAtes joli ! que vous
+    me semblez beau !\r\nSans mentir, si votre ramage\r\nSe rapporte \xE0 votre plumage,\r\nVous
+    \xEAtes le Ph\xE9nix des h\xF4tes de ces bois.\n\r\xC0 ces mots le Corbeau ne
+    se sent pas de joie,\r\nEt pour montrer sa belle voix,\r\nIl ouvre un large bec,
+    laisse tomber sa proie.\n\rLe Renard s\u2019en saisit, et dit : Mon bon Monsieur,\n\rApprenez
+    que tout flatteur\r\nVit aux d\xE9pens de celui qui l\u2019\xE9coute.\n\rCette
+    le\xE7on vaut bien un fromage sans doute."
+  audioClip: {fileID: 8300000, guid: ff46d868d36e03a4a90d9824aa81dc9b, type: 3}
+  markers:
+  - audioTime: 0.94
+    sample: 40572
+  - audioTime: 1.09
+    sample: 48069
+  - audioTime: 1.66
+    sample: 73647
+  - audioTime: 1.85
+    sample: 81144
+  - audioTime: 2.09
+    sample: 90846
+  - audioTime: 2.98
+    sample: 131859
+  - audioTime: 3.06
+    sample: 135828
+  - audioTime: 3.19
+    sample: 142002
+  - audioTime: 3.39
+    sample: 150822
+  - audioTime: 4.26
+    sample: 186984
+  - audioTime: 4.39
+    sample: 194481
+  - audioTime: 4.48
+    sample: 197568
+  - audioTime: 4.6
+    sample: 201978
+  - audioTime: 5.01
+    sample: 221382
+  - audioTime: 5.96
+    sample: 117306
+  - audioTime: 6.16
+    sample: 119070

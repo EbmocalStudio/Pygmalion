@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7377d1a17be070438973a4a2fc6cd2b, type: 3}
+  m_Name: Fable4 - V4
+  m_EditorClassIdentifier: 
+  fableTitle: Fable4 - V4
+  fableText: "Lui tint \xE0 peu pr\xE8s ce langage :"
+  audioClip: {fileID: 8300000, guid: c9baacd2cc86cc04cabf52b69d9b30bc, type: 3}
+  markers:
+  - audioTime: 0.19
+    sample: 7939
+  - audioTime: 0.37
+    sample: 15877
+  - audioTime: 0.5499998
+    sample: 30429
+  - audioTime: 0.7399999
+    sample: 33957
+  - audioTime: 0.94
+    sample: 41454
+  - audioTime: 1.05
+    sample: 50274
+  - audioTime: 1.17
+    sample: 51597
