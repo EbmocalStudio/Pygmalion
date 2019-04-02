@@ -1,9 +1,14 @@
 fileFormatVersion: 2
-guid: eded71749bc5b410f9b8b52be5212830
+guid: 9c0cf6fcb76944bf790648c625140218
 TextureImporter:
   fileIDToRecycleName:
-    21300000: botte_de_foib_0
-    21300002: botte_de_foib_1
+    21300000: Fleurs_All_0
+    21300002: Fleurs_All_1
+    21300004: Fleurs_All_2
+    21300006: Fleurs_All_3
+    21300008: Fleurs_All_4
+    21300010: Fleurs_All_5
+    21300012: Fleurs_All_6
   externalObjects: {}
   serializedVersion: 5
   mipmaps:
@@ -117,33 +122,33 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: botte_de_foib_0
+      name: Fleurs_All_0
       rect:
         serializedVersion: 2
-        x: 640
-        y: 1508
-        width: 1129
-        height: 842
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 115
+        y: 7
+        width: 60
+        height: 148
+      alignment: 9
+      pivot: {x: 0.48966667, y: 0.5200291}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8b9c5e95061ba405fac53cb887bd4712
+      spriteID: da3d79321983b4ea7baa92f67f44876b
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: botte_de_foib_1
+      name: Fleurs_All_1
       rect:
         serializedVersion: 2
-        x: 1025
-        y: 540
-        width: 1183
-        height: 645
+        x: 222
+        y: 6
+        width: 44
+        height: 126
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -151,7 +156,107 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9480fa1840d2c4502a15999e87600006
+      spriteID: 13308a70d9ee94e00934d6cc19f963ef
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fleurs_All_2
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 10
+        width: 43
+        height: 125
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b5a3f90048ee84214bc481bfcf0165ce
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fleurs_All_3
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 104
+        width: 92
+        height: 226
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 138c9f7636ec34f6a9f88b8d7097ca7c
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fleurs_All_4
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 119
+        width: 84
+        height: 211
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a3b3620fb1b734ed08ea7975b83d34b5
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fleurs_All_5
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 116
+        width: 95
+        height: 218
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0ac1ed4c3f8874d42bd35b9341152cf3
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fleurs_All_6
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 116
+        width: 87
+        height: 212
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 71b0fe9a1ea8f4d5891985201400ee26
       vertices: []
       indices: 
       edges: []
@@ -159,7 +264,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 78d28f142c40e407e8d0db8a54e655bf
+    spriteID: 0cdd87c0cbceb4450866aa20c1db204e
     vertices: []
     indices: 
     edges: []

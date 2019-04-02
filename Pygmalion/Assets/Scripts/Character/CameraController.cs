@@ -10,12 +10,14 @@ public class CameraController : MonoBehaviour {
 	public bool useBounds = true;
 	public Vector3 minBound;
 	public Vector3 maxBound;
+    private Vector3 minBoundReal, maxBoundReal;
 
     //private Vector3 minLimit, maxLimit;
 
-	// in viewport
-	public Vector3 minFreedom = new Vector3(0.5f, 0.2f, 9.0f);
+    // in viewPort
+    public Vector3 minFreedom = new Vector3(0.5f, 0.2f, 9.0f);
 	public Vector3 maxFreedom = new Vector3(0.5f, 0.7f, 11.0f);
+    public Vector3 offset;
 
 	public Transform target;
 
@@ -25,25 +27,31 @@ public class CameraController : MonoBehaviour {
 
 	void Start(){
 		camera = GetComponent<Camera>();
-	}
+        Vector3 camMin = camera.ViewportToWorldPoint(Vector3.zero);
+        Vector3 camMax = camera.ViewportToWorldPoint(new Vector3(1, 1, 0));
+        Vector3 camHalf = (camMax - camMin)/2.0f;
+        minBoundReal = minBound + camHalf;
+        maxBoundReal = maxBound - camHalf;
+    }
 
 	// Update is called once per frame
 	void Update () {
 		if (target){
-			Vector3 worldMinFreedom = camera.ViewportToWorldPoint(minFreedom);
-			Vector3 worldMaxFreedom = camera.ViewportToWorldPoint(maxFreedom);
-			Vector3 potentialTranslation = Util.getDistanceFromRange(target.position, worldMinFreedom, worldMaxFreedom);
-			Vector3 newPos = transform.position + potentialTranslation;
-			if (useBounds)
-				newPos = Util.Clamp(newPos, minBound, maxBound);
+            Vector3 worldMinFreedom = camera.ViewportToWorldPoint(minFreedom);
+            Vector3 worldMaxFreedom = camera.ViewportToWorldPoint(maxFreedom);
+            Vector3 potentialTranslation = Util.getDistanceFromRange(target.position, worldMinFreedom, worldMaxFreedom);
+            Vector3 newPos = transform.position + potentialTranslation;
+            if (useBounds)
+				newPos = Util.Clamp(newPos, minBoundReal, maxBoundReal);
 			if (debug){
 				Debug.Log("Current Pos: " + transform.position);
 				Debug.Log("Potential translation: " + potentialTranslation);
 				Debug.Log("New pos: " + newPos);
 				debug = false;
 			}
-			transform.position = newPos;
+			transform.position = newPos + offset;
 		}
-	}
+
+    }
 
 }
