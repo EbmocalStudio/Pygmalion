@@ -65,7 +65,7 @@ namespace TextUtil {
 				 * Change conditions to allow a certain flexibility and avoid certain exceptions.
 				 * E.g. : ; ' - ! ? ( )
 				 */
-				if(text[i] == ' ' || text[i] == ',' || text[i] == '.' || text[i] == '\0' || text[i] == '!' || text[i] == ':' || text[i] == '\n') {
+				if(DetectWordEndingChar(text, i)) {
 					int length = i - wordIndex;
 					if(length > 0) {
 						//If a word separating char is found, add the completed word to the list.
@@ -75,7 +75,24 @@ namespace TextUtil {
 					//Change the starting index of the new word to the next index.
 					wordIndex = i + 1;
 				}
+				else if(i + 1 == text.Length)
+					words.Add(new WordData(text.Substring(wordIndex, i + 1 - wordIndex), wordIndex, i , characters));
 			}
+		}
+
+		public static bool DetectWordEndingChar(string text, int index) {
+			if(text[index] < 48 && text[index] != 39)
+				return true;
+			if(text[index] > 57 && text[index] < 65)
+				return true;
+			if(text[index] > 90 && text[index] < 97)
+				return true;
+			if(text[index] > 122 && text[index] < 160)
+				return true;
+			if(text[index] > 254 && text[index] != 8217)
+				return true;
+
+			return false;
 		}
 	}
 }

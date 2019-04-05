@@ -50,6 +50,9 @@ TagManager:
   - name: Terrain
     uniqueID: 3042256349
     locked: 0
+  - name: Middle Ground
+    uniqueID: 2506438215
+    locked: 0
   - name: Interactive
     uniqueID: 4147384075
     locked: 0
@@ -58,4 +61,7 @@ TagManager:
     locked: 0
   - name: Front Ground
     uniqueID: 3793295319
+    locked: 0
+  - name: Fable
+    uniqueID: 2411769381
     locked: 0

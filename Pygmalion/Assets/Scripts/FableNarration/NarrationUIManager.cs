@@ -10,7 +10,9 @@ public class NarrationUIManager : MonoBehaviour {
 	// - Clean rectTransform utilization.
 	// - Figure a way to have the canvas region follow the camera without moving the text.
 	
-	public GameObject definitionExample;
+	public GameObject definitionWindow;
+	public Text audioHighlight;
+	public Text playerHighlight;
 	public bool debuggingOn;
 	public Color debuggingCharacterColor;
 	public Color debuggingWordColor;
@@ -18,30 +20,32 @@ public class NarrationUIManager : MonoBehaviour {
 	private DynamicTextData _textData;
 	private Text _currentHighlight;
 
-	private bool _isHoverActive = true;
-
 	private void Update() {
 		if(_textData != null && debuggingOn) {
 			//Debugging.
-			DrawCharacters(Time.deltaTime, debuggingCharacterColor);
-			DrawWords(Time.deltaTime, debuggingWordColor);
+			DrawCharacters(_textData, Time.deltaTime, debuggingCharacterColor);
+			DrawWords(_textData, Time.deltaTime, debuggingWordColor);
 		}
 	}
 
-	private void OnMouseDown() {
-		DynamicTextData.WordData word = GetWordFromPosition(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+	public bool ToggleDefinitionWindow(DynamicTextData.WordData word) {
+		if(!definitionWindow.activeSelf) {
+			definitionWindow.SetActive(true);
+			definitionWindow.transform.GetChild(0).GetComponent<Text>().text = word.text;
+			definitionWindow.transform.GetChild(1).GetComponent<Text>().text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+			HighlightWord(word, Color.green);
 
-		if(word != null) {
-			if(!definitionExample.activeSelf) {
-				definitionExample.SetActive(true);
-				definitionExample.transform.GetChild(0).GetComponent<Text>().text = word.text;
-				definitionExample.transform.GetChild(1).GetComponent<Text>().text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
-				HighlightWord(word, Color.green);
-				_isHoverActive = false;
-			}
-			else if(definitionExample.transform.GetChild(0).GetComponent<Text>().text == word.text)
-				DisableDefinitionPanel();
+			return false;
 		}
+		else if(definitionWindow.transform.GetChild(0).GetComponent<Text>().text == word.text)
+			DisableDefinitionPanel();
+
+		return true;
+	}
+
+	public void DisableDefinitionPanel() {
+		definitionWindow.SetActive(false);
+		_currentHighlight.text = "";
 	}
 
 	public void SetEmpty() {
@@ -49,51 +53,29 @@ public class NarrationUIManager : MonoBehaviour {
 		_currentHighlight = null;
 	}
 
-	public void LoadData(DynamicTextData textData, Text highlightText) {
+	public void LoadData(DynamicTextData textData) {
 		_textData = textData;
-		_currentHighlight = highlightText;
-	}
-
-	public void DisableDefinitionPanel() {
-		definitionExample.SetActive(false);
-		_currentHighlight.text = "";
-		_isHoverActive = true;
-	}
-
-	private void OnMouseOver() {
-		if(_isHoverActive) {
-			DynamicTextData.WordData word = GetWordFromPosition(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-
-			if(word != null)
-				HighlightWord(word, Color.red);
-		}
-	}
-
-	private DynamicTextData.WordData GetWordFromPosition(Vector2 position) {
-		foreach(DynamicTextData.WordData word in _textData.words) {
-			Vector2 pos = (Vector2)_textData.containerTransform.position + word.position;
-			if(position.x < pos.x - word.size.x / 2 || position.x > pos.x + word.size.x / 2)
-				continue;
-			if(position.y < pos.y - word.size.y / 2 || position.y > pos.y + word.size.y / 2)
-				continue;
-
-			return word;
-		}
-
-		return null;
 	}
 
 	public void HighlightWord(DynamicTextData.WordData word, Color color) {
-		_currentHighlight.text = word.text;
-		_currentHighlight.rectTransform.position = (Vector2)_textData.containerTransform.position + word.position;
-		_currentHighlight.color = color;
+		Highlight(audioHighlight, _textData, word, color);
+	}
+
+	public void MouseHighlight(DynamicTextData textData, DynamicTextData.WordData word, Color color) {
+		Highlight(playerHighlight, textData, word, color);
+	}
+
+	public void Highlight(Text textObject, DynamicTextData textData, DynamicTextData.WordData word, Color color) {
+		textObject.text = word.text;
+		textObject.rectTransform.position = (Vector2)_textData.containerTransform.position + word.position;
+		textObject.color = color;
 	}
 
 	//For debugging purposes, draws the extents of all characters in a given dynamic string.
-	private void DrawCharacters(float duration, Color color) {
-		foreach(DynamicTextData.CharacterData data in _textData.characters) {
+	private static void DrawCharacters(DynamicTextData textData, float duration, Color color) {
+		foreach(DynamicTextData.CharacterData data in textData.characters) {
 			DebugTools.DrawRectangle(
-				(Vector2)_textData.containerTransform.position + data.localPos,
+				(Vector2)textData.containerTransform.position + data.localPos,
 				data.worldSize.x / 2,
 				data.worldSize.y / 2,
 				color,
@@ -103,10 +85,10 @@ public class NarrationUIManager : MonoBehaviour {
 	}
 
 	//For debugging purposes, draws the extents of all words in a given dynamic string.
-	private void DrawWords(float duration, Color color) {
-		foreach(DynamicTextData.WordData data in _textData.words) {
+	private static void DrawWords(DynamicTextData textData, float duration, Color color) {
+		foreach(DynamicTextData.WordData data in textData.words) {
 			DebugTools.DrawRectangle(
-				(Vector2)_textData.containerTransform.position + data.position,
+				(Vector2)textData.containerTransform.position + data.position,
 				data.size.x / 2,
 				data.size.y / 2,
 				color,

@@ -97,9 +97,9 @@ public class TimestampsEditor : EditorWindow {
 					if(e.button == 0) {
 						UpdateWaveformTimeline(e.mousePosition);
 
-						if(IsCursorOnMarker(e.mousePosition)) {
+						if(!_fableNeedUpdate && IsCursorOnMarker(e.mousePosition)) {
 							foreach(TimestampMarker marker in _markers) {
-								if(GetChildRect(marker.rect, _audioEditArea, _scrollRect).Contains(e.mousePosition)) {
+								if(GetChildRect(marker.rect, _audioEditArea, _scrollRect).Contains(new Vector2(e.mousePosition.x + _scrollPos.x, e.mousePosition.y))) {
 									_currentMarker = marker;
 									Repaint();
 									break;
@@ -114,11 +114,11 @@ public class TimestampsEditor : EditorWindow {
 					if(e.button == 0) {
 						UpdateWaveformTimeline(e.mousePosition);
 
-						if(IsCursorOnMarker(e.mousePosition)) {
+						if(!_fableNeedUpdate && IsCursorOnMarker(e.mousePosition)) {
 							bool shouldRepaint = false;
 
 							foreach(TimestampMarker marker in _markers) {
-								if(GetChildRect(marker.rect, _audioEditArea, _scrollRect).Contains(e.mousePosition)) {
+								if(GetChildRect(marker.rect, _audioEditArea, _scrollRect).Contains(new Vector2(e.mousePosition.x + _scrollPos.x, e.mousePosition.y))) {
 									marker.Drag(e.delta.x, audioClip.length, _toolBox.sliderValue);
 									shouldRepaint = true;
 								}
@@ -140,7 +140,19 @@ public class TimestampsEditor : EditorWindow {
 			
 			if(_splitFableText != null && _splitFableText.Count > 0 == true && !_fableNeedUpdate && _markers.Count < _splitFableText.Count) {
 				genericMenu.AddItem(new GUIContent("Add Marker"), false, AddMarker, mousePosition);
-				genericMenu.AddItem(new GUIContent("Remove Marker"), false, RemoveMarker);
+
+				TimestampMarker markerToRemove = null;
+				foreach(TimestampMarker marker in _markers) {
+					if(GetChildRect(marker.rect, _audioEditArea, _scrollRect).Contains(new Vector2(mousePosition.x + _scrollPos.x, mousePosition.y))) {
+						markerToRemove = marker;
+						break;
+					}
+				}
+
+				if(markerToRemove != null)
+					genericMenu.AddItem(new GUIContent("Remove Marker"), false, RemoveMarker, markerToRemove);
+				else
+					genericMenu.AddItem(new GUIContent("Remove Marker"), false, null);
 			}
 			else {
 				genericMenu.AddItem(new GUIContent("Add Marker"), false, null);
@@ -165,7 +177,7 @@ public class TimestampsEditor : EditorWindow {
 				if(mousePosition.x - child.x > _toolBox.sliderValue)
 					_currentSample = audioClip.samples;
 				else {
-					_currentSample = Mathf.CeilToInt((mousePosition.x - child.x) / _toolBox.sliderValue * audioClip.samples);
+					_currentSample = Mathf.CeilToInt((mousePosition.x - child.x + _scrollPos.x) / _toolBox.sliderValue * audioClip.samples);
 
 					if(!AudioUtility.IsClipPlaying(audioClip)) {
 						PlayClip(_currentSample);
@@ -232,7 +244,7 @@ public class TimestampsEditor : EditorWindow {
 
 		GUILayout.Label("Marker Settings : ");
 
-		if(_currentMarker != null) {
+		if(_currentMarker != null && _splitFableText != null) {
 			GUILayout.Label("Max Sample : ");
 			using(new EditorGUI.DisabledScope())
 				TextField("Word : ", _splitFableText[_markers.IndexOf(_currentMarker)]);
@@ -245,23 +257,21 @@ public class TimestampsEditor : EditorWindow {
 		GUILayout.EndArea();
 	}
 
-	private void SplitString() {
+	private void SplitString(bool forceUpdate = false) {
 		//Disables the button if the fable split string is up to date with the fable text.
 		using(new EditorGUI.DisabledScope(!_fableNeedUpdate)) {
-			if(GUILayout.Button(new GUIContent("Split String"), GUILayout.Width(98), GUILayout.Height(30))) {
+			if(GUILayout.Button(new GUIContent("Split String"), GUILayout.Width(98), GUILayout.Height(30)) || forceUpdate) {
 				_splitFableText = new List<string>();
 
 				int wordIndex = 0;
 
-				string escapedText = _fableText + '\0';
-
-				for(int i = 0; i < escapedText.Length; i++) {
-					if(escapedText[i] == ' ' || escapedText[i] == ',' || escapedText[i] == '.' || escapedText[i] == '\0' || escapedText[i] == '!' || escapedText[i] == ':' || escapedText[i] == '\n') {
+				for(int i = 0; i < _fableText.Length; i++) {
+					if(TextUtil.DynamicTextData.DetectWordEndingChar(_fableText, i)) {
 						int length = i - wordIndex;
 
 						if(length > 0) {
 							//If a word separating char is found, add the completed word to the list.
-							_splitFableText.Add(escapedText.Substring(wordIndex, length));
+							_splitFableText.Add(_fableText.Substring(wordIndex, length));
 						}
 
 						//Change the starting index of the new word to the next index.
@@ -317,6 +327,9 @@ public class TimestampsEditor : EditorWindow {
 					ResetSettings();
 					PaintWaveform();
 
+					//SplitString is now different than fable text.
+					SplitString(true);
+
 					Repaint();
 				}
 				else
@@ -371,7 +384,7 @@ public class TimestampsEditor : EditorWindow {
 
 	#region Markers
 	private void AddMarker(object mousePosition) {
-		Vector2 pos = (Vector2)mousePosition;
+		Vector2 pos = new Vector2(((Vector2)mousePosition).x + _scrollPos.x, ((Vector2)mousePosition).y);
 		float audioTimeFraction = (pos.x - GetChildRect(_audioEditArea, _markerBox).x) / _toolBox.sliderValue;
 		float audioTime = audioTimeFraction * audioClip.length;
 		int sampleTime = Mathf.CeilToInt(audioTimeFraction * (float)audioClip.samples);
@@ -382,8 +395,10 @@ public class TimestampsEditor : EditorWindow {
 		Repaint();
 	}
 
-	private void RemoveMarker() {
-
+	private void RemoveMarker(object marker) {
+		_currentMarker = null;
+		_markers.Remove(marker as TimestampMarker);
+		Repaint();
 	}
 
 	private void UpdateMarkerPosition() {
@@ -398,7 +413,7 @@ public class TimestampsEditor : EditorWindow {
 			Vector2 firstPoint = new Vector2(marker.rect.position.x + marker.rect.width / 2, marker.rect.height);
 			Vector2 secondPoint = new Vector2(marker.rect.position.x + marker.rect.width / 2, marker.rect.height + _waveformRect.height);
 
-			Handles.color = Color.white;
+			Handles.color = _fableNeedUpdate ? Color.gray : Color.white;
 			Handles.DrawLine(
 				firstPoint,
 				secondPoint
